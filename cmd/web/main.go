@@ -2,11 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"final-project/data"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/alexedwards/scs/redisstore"
@@ -38,17 +41,19 @@ func main() {
 	wg := sync.WaitGroup{}
 
 	// set up the application config
-	app := Config {
-		Session: session,
-		DB: db,
-		InfoLog: infoLog,
+	app := Config{
+		Session:  session,
+		DB:       db,
+		InfoLog:  infoLog,
 		ErrorLog: errorLog,
-		Wait: &wg,
+		Wait:     &wg,
+		Models:   data.New(db),
 	}
 
 	// set up mail
 
-	// listen for web connections
+	go app.listenForShutdown()
+
 	app.serve()
 }
 
@@ -138,4 +143,22 @@ func initRedis() *redis.Pool {
 	}
 
 	return redisPool
+}
+
+func (app *Config) listenForShutdown() {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	app.shutdown()
+	os.Exit(0)
+}
+
+func (app *Config) shutdown() {
+	// perform any cleanup tasks
+	app.InfoLog.Println("would run cleanup tasks...")
+
+	// block until waitgroup is empty
+	app.Wait.Wait()
+
+	app.InfoLog.Println("closing channels and shutting down application...")
 }
