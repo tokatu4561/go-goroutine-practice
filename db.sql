@@ -2,7 +2,7 @@
 -- Name: plans; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.plans (
+CREATE TABLE plans (
                               id integer NOT NULL,
                               plan_name character varying(255),
                               plan_amount integer,
@@ -15,8 +15,8 @@ CREATE TABLE public.plans (
 -- Name: plans_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-ALTER TABLE public.plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.plans_id_seq
+ALTER TABLE plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME plans_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -29,7 +29,7 @@ ALTER TABLE public.plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 -- Name: user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.user_id_seq
+CREATE SEQUENCE user_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -41,7 +41,7 @@ CREATE SEQUENCE public.user_id_seq
 -- Name: user_plans; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.user_plans (
+CREATE TABLE user_plans (
                                    id integer NOT NULL,
                                    user_id integer,
                                    plan_id integer,
@@ -54,8 +54,8 @@ CREATE TABLE public.user_plans (
 -- Name: user_plans_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-ALTER TABLE public.user_plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.user_plans_id_seq
+ALTER TABLE user_plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME user_plans_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -64,8 +64,8 @@ ALTER TABLE public.user_plans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
 );
 
 
-CREATE TABLE public.users (
-                              id integer DEFAULT nextval('public.user_id_seq'::regclass) NOT NULL,
+CREATE TABLE users (
+                              id integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL,
                               email character varying(255),
                               first_name character varying(255),
                               last_name character varying(255),
@@ -81,13 +81,13 @@ INSERT INTO "public"."users"("email","first_name","last_name","password","user_a
 VALUES
     (E'admin@example.com',E'Admin',E'User',E'$2a$12$1zGLuYDDNvATh4RA4avbKuheAMpb1svexSzrQm7up.bnpwQHs0jNe',1,1,E'2022-03-14 00:00:00',E'2022-03-14 00:00:00');
 
-SELECT pg_catalog.setval('public.plans_id_seq', 1, false);
+SELECT pg_catalog.setval('plans_id_seq', 1, false);
 
 
-SELECT pg_catalog.setval('public.user_id_seq', 2, true);
+SELECT pg_catalog.setval('user_id_seq', 2, true);
 
 
-SELECT pg_catalog.setval('public.user_plans_id_seq', 1, false);
+SELECT pg_catalog.setval('user_plans_id_seq', 1, false);
 
 INSERT INTO "public"."plans"("plan_name","plan_amount","created_at","updated_at")
 VALUES
@@ -96,24 +96,24 @@ VALUES
     (E'Gold Plan',3000,E'2022-05-12 00:00:00',E'2022-05-12 00:00:00');
 
 
-ALTER TABLE ONLY public.plans
+ALTER TABLE ONLY plans
     ADD CONSTRAINT plans_pkey PRIMARY KEY (id);
 
 
-ALTER TABLE ONLY public.user_plans
+ALTER TABLE ONLY user_plans
     ADD CONSTRAINT user_plans_pkey PRIMARY KEY (id);
 
 
-ALTER TABLE ONLY public.users
+ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
 
-ALTER TABLE ONLY public.user_plans
-    ADD CONSTRAINT user_plans_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES public.plans(id) ON UPDATE RESTRICT ON DELETE CASCADE;
+ALTER TABLE ONLY user_plans
+    ADD CONSTRAINT user_plans_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES plans(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 
-ALTER TABLE ONLY public.user_plans
-    ADD CONSTRAINT user_plans_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON UPDATE RESTRICT ON DELETE CASCADE;
+ALTER TABLE ONLY user_plans
+    ADD CONSTRAINT user_plans_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 
 
