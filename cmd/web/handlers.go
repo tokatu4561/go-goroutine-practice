@@ -227,6 +227,15 @@ func (app *Config) SubcribeToPlan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	u, err := app.Models.User.GetOne(user.ID)
+	if err != nil {
+		app.Session.Put(r.Context(), "error", "Error getting user from database!")
+		http.Redirect(w, r, "/members/plan", http.StatusSeeOther)
+		return
+	}
+
+	app.Session.Put(r.Context(), "user", u)
+
 	app.Session.Put(r.Context(), "flash", "Subscribed! 購入完了")
 	http.Redirect(w, r, "/members/plans", http.StatusSeeOther)
 }
