@@ -184,6 +184,7 @@ func (app *Config) createMail() Mail {
 		Encryption: "none",
 		FromAddress: "info@mycompany.com",
 		FromName: "info",
+		Wait: app.Wait,
 		MailerChan: mailerChan,
 		ErrorChan: errorChan,
 		DoneChan: mailerDoneChan,
